@@ -60,3 +60,6 @@ vo = ipx.virtualoutput[4]
 vo.on()
 print (vo.status)
 ```
+
+## Credits
+Thank to [d3mi1](https://github.com/d4mi1/python-ipx800) and [marcaurele](https://github.com/marcaurele/gce-ipx800) to inspiration :)
