@@ -13,8 +13,8 @@ Control the IPX800, X-PWM, X-8R, X-8D, X-24D and X-Dimmer trough:
 * host: ip or hostname
 * port
 * api key
-* user: name of user or admin (for X-PWM only)
-* password: password of user or admin (for X-PWM only)
+* user: name of user or admin (for X-PWM control only)
+* password: password of user or admin (for X-PWM control only)
 
 ## Example
 ```python
