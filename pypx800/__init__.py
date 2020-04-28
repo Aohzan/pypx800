@@ -7,13 +7,12 @@ DEFAULT_TRANSITION = 500
 class IPX800:
     """Class representing the IPX800 and its API"""
 
-    def __init__(self, host, port, api_key, username="Undefined", password="Undefined", force=False):
+    def __init__(self, host, port, api_key, username="Undefined", password="Undefined"):
         self.host = host
         self.port = port
         self.api_key = api_key
         self.username = username
         self.password = password
-        self._force_request = force
 
         self._api_url = f"http://{host}:{port}/api/xdevices.json"
         self._cgi_url = f"http://{username}:{password}@{host}:{port}/user/api.cgi"
@@ -31,16 +30,17 @@ class IPX800:
         params_with_api.update(params)
         r = requests.get(self._api_url, params=params_with_api, timeout=2)
         r.raise_for_status()
-        content = r.json()
-        result = content.get("status", None)
-        if result == "Success" or self._force_request:
-            return content
-        else:
-            raise Exception(
-                "IPX800 api request error, url: %s`r%s",
-                f"{r.request.url[0:r.request.url.index('?key=') + 5]}removed{r.request.url[r.request.url.index('&')::]}",
-                content,
-            )
+        # the ipx800 send partial answer with error status
+        return r.json()
+        # result = content.get("status", None)
+        # if result == "Success":
+        #     return content
+        # else:
+        #     raise Exception(
+        #         "IPX800 api request error, url: %s`r%s",
+        #         f"{r.request.url[0:r.request.url.index('?key=') + 5]}removed{r.request.url[r.request.url.index('&')::]}",
+        #         content,
+        #     )
 
     def _request_cgi(self, params):
         r = requests.get(self._cgi_url, params=params, timeout=2)
@@ -51,9 +51,7 @@ class IPX800:
         else:
             raise Exception(
                 "IPX800 cgi request error, url: %s`r%s",
-                r.request.url
-                if HIDE_SECRET
-                else f"{r.request.url[0:r.request.url.index('http://') + 7]}removed{r.request.url[r.request.url.index('@')::]}",
+                f"{r.request.url[0:r.request.url.index('http://') + 7]}removed{r.request.url[r.request.url.index('@')::]}",
                 r.request.content,
             )
 
