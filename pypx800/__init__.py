@@ -2,18 +2,18 @@ import collections
 import requests
 
 DEFAULT_TRANSITION = 500
-HIDE_SECRET = False
 
 
 class IPX800:
     """Class representing the IPX800 and its API"""
 
-    def __init__(self, host, port, api_key, username="Undefined", password="Undefined"):
+    def __init__(self, host, port, api_key, username="Undefined", password="Undefined", force=False):
         self.host = host
         self.port = port
         self.api_key = api_key
         self.username = username
         self.password = password
+        self._force_request = force
 
         self._api_url = f"http://{host}:{port}/api/xdevices.json"
         self._cgi_url = f"http://{username}:{password}@{host}:{port}/user/api.cgi"
@@ -33,14 +33,12 @@ class IPX800:
         r.raise_for_status()
         content = r.json()
         result = content.get("status", None)
-        if result == "Success":
+        if result == "Success" or self._force_request:
             return content
         else:
             raise Exception(
                 "IPX800 api request error, url: %s`r%s",
-                r.request.url
-                if HIDE_SECRET
-                else f"{r.request.url[0:r.request.url.index('?key=') + 5]}removed{r.request.url[r.request.url.index('&')::]}",
+                f"{r.request.url[0:r.request.url.index('?key=') + 5]}removed{r.request.url[r.request.url.index('&')::]}",
                 content,
             )
 
