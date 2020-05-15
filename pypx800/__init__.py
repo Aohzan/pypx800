@@ -4,10 +4,6 @@ import requests
 DEFAULT_TRANSITION = 500
 
 
-def parse_response(key, response):
-    return response == 1 if key in response else None
-
-
 class IPX800:
     """Class representing the IPX800 and its API"""
 
@@ -111,7 +107,7 @@ class Relay(IPX800):
         """Return the current relay status."""
         params = {"Get": "R"}
         response = self._request_api(params)
-        return parse_response(f"R{self.id}", response)
+        return response[f"R{self.id}"] == 1
 
     def on(self) -> bool:
         """Turn on a relay and return True if it was successful."""
@@ -143,7 +139,7 @@ class VO(IPX800):
     def status(self) -> bool:
         params = {"Get": "VO"}
         response = self._request_api(params)
-        return parse_response(f"VO{self.id}", response)
+        return response[f"VO{self.id}"] == 1
 
     def on(self) -> bool:
         params = {"SetVO": self.id}
@@ -172,7 +168,7 @@ class VI(IPX800):
     def status(self) -> bool:
         params = {"Get": "VI"}
         response = self._request_api(params)
-        return parse_response(f"VI{self.id}", response)
+        return response[f"VI{self.id}"] == 1
 
     def on(self) -> bool:
         params = {"SetVI": self.id}
@@ -304,7 +300,7 @@ class AInput(IPX800):
     def value(self) -> float:
         params = {"Get": "A"}
         response = self._request_api(params)
-        return response[f"A{self.id}"] if f"A{self.id}" in response else None
+        return response[f"A{self.id}"]
 
 
 class DInput(IPX800):
@@ -318,4 +314,4 @@ class DInput(IPX800):
     def value(self) -> bool:
         params = {"Get": "D"}
         response = self._request_api(params)
-        return parse_response(f"D{self.id}", response)
+        return response[f"D{self.id}"] == 1
