@@ -64,10 +64,7 @@ class IPX800:
         return False
 
     def global_get(self):
-        result = {}
-        for i in "R", "G", "A", "I", "XPWM", "VI", "VO":
-            result.update(self._request_api({"Get": i}))
-        return result
+        return self._request_api({"Get": "all"})
 
 
 class GenericSlice(collections.abc.Sequence):
