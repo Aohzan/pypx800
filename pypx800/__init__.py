@@ -64,7 +64,9 @@ class IPX800:
         return False
 
     def global_get(self):
-        return self._request_api({"Get": "all"})
+        values = self._request_api({"Get": "all"})
+        values.update(self._request_api({"Get": "XPWM|1-24"})) # add separated XPWM values
+        return values
 
 
 class GenericSlice(collections.abc.Sequence):

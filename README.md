@@ -22,6 +22,7 @@ from pypx800 import IPX800 as pypx800
 
 ipx = pypx800('192.168.1.240','80','apikey','user', 'password')
 values = ipx.global_get()
+print (values)
 
 # Relay
 r14 = ipx.relays[14]
