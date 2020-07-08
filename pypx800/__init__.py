@@ -24,6 +24,7 @@ class IPX800:
         self.virtualin = GenericSlice(self, VI, {"Get": "VI"})
         self.analogin = GenericSlice(self, AInput, {"Get": "A"})
         self.digitalin = GenericSlice(self, DInput, {"Get": "D"})
+        self.xthl = GenericSlice(self, XTHL, {"Get": "XTHL"})
 
     def _request_api(self, params):
         params_with_api = {"key": self.api_key}
@@ -53,7 +54,7 @@ class IPX800:
                 f"{r.request.url[0:r.request.url.index('http://') + 7]}removed{r.request.url[r.request.url.index('@')::]}",
                 r.request.content,
             )
-    
+
     def ping(self):
         try:
             self._request_api({"Get": "R"})
@@ -64,7 +65,9 @@ class IPX800:
 
     def global_get(self):
         values = self._request_api({"Get": "all"})
-        values.update(self._request_api({"Get": "XPWM|1-24"})) # add separated XPWM values
+        values.update(
+            self._request_api({"Get": "XPWM|1-24"})
+        )  # add separated XPWM values
         return values
 
 
@@ -313,3 +316,29 @@ class DInput(IPX800):
         params = {"Get": "D"}
         response = self._request_api(params)
         return response[f"D{self.id}"] == 1
+
+
+class XTHL(IPX800):
+    """Representing an IPX800 X-THL."""
+
+    def __init__(self, ipx, xthl_id: int):
+        super().__init__(ipx.host, ipx.port, ipx.api_key, ipx.username, ipx.password)
+        self.id = xthl_id
+
+    @property
+    def temp(self) -> float:
+        params = {"Get": "XTHL"}
+        response = self._request_api(params)
+        return response[f"THL{self.id}-TEMP"]
+
+    @property
+    def hum(self) -> float:
+        params = {"Get": "XTHL"}
+        response = self._request_api(params)
+        return response[f"THL{self.id}-HUM"]
+
+    @property
+    def lum(self) -> int:
+        params = {"Get": "XTHL"}
+        response = self._request_api(params)
+        return response[f"THL{self.id}-LUM"]

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7
+
+- Add support for X-THL
+
 ## 0.6
 
 - Add XPWM values to global get

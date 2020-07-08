@@ -1,22 +1,26 @@
-# pypx800 - Python GCE IPX800 
+# pypx800 - Python GCE IPX800
 
-Control the IPX800, X-PWM, X-8R, X-8D, X-24D and X-Dimmer trough:
-* relay
-* virtual output
-* virtual input
-* digital input
-* analog input
-* xdimmer output
-* xpwm channel
+Control the IPX800, X-PWM, X-THL, X-8R, X-8D, X-24D and X-Dimmer trough:
+
+- relay
+- virtual output
+- virtual input
+- digital input
+- analog input
+- xdimmer output
+- xpwm channel
+- xthl
 
 ## Parameters
-* host: ip or hostname
-* port
-* api key
-* user: name of user or admin (for X-PWM control only)
-* password: password of user or admin (for X-PWM control only)
+
+- host: ip or hostname
+- port
+- api key
+- user: name of user or admin (for X-PWM control only)
+- password: password of user or admin (for X-PWM control only)
 
 ## Example
+
 ```python
 from pypx800 import IPX800 as pypx800
 
@@ -60,7 +64,14 @@ print (vi.status)
 vo = ipx.virtualoutput[4]
 vo.on()
 print (vo.status)
+
+# X-THL
+sensor = ipx.xthl[1]
+print (sensor.temp)
+print (sensor.hum)
+print (sensor.lum)
 ```
 
 ## Credits
+
 Thank to [d3mi1](https://github.com/d4mi1/python-ipx800) and [marcaurele](https://github.com/marcaurele/gce-ipx800) for inspiration :)
