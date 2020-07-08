@@ -30,17 +30,16 @@ class IPX800:
         params_with_api.update(params)
         r = requests.get(self._api_url, params=params_with_api, timeout=2)
         r.raise_for_status()
-        # the ipx800 send partial answer with error status
-        return r.json()
-        # result = content.get("status", None)
-        # if result == "Success":
-        #     return content
-        # else:
-        #     raise Exception(
-        #         "IPX800 api request error, url: %s`r%s",
-        #         f"{r.request.url[0:r.request.url.index('?key=') + 5]}removed{r.request.url[r.request.url.index('&')::]}",
-        #         content,
-        #     )
+        content = r.json()
+        result = content.get("status", None)
+        if result == "Success":
+            return content
+        else:
+            raise Exception(
+                "IPX800 api request error, url: %s`r%s",
+                f"{r.request.url[0:r.request.url.index('?key=') + 5]}removed{r.request.url[r.request.url.index('&')::]}",
+                content,
+            )
 
     def _request_cgi(self, params):
         r = requests.get(self._cgi_url, params=params, timeout=2)
@@ -54,7 +53,7 @@ class IPX800:
                 f"{r.request.url[0:r.request.url.index('http://') + 7]}removed{r.request.url[r.request.url.index('@')::]}",
                 r.request.content,
             )
-
+    
     def ping(self):
         try:
             self._request_api({"Get": "R"})
