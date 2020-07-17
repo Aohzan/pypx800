@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0
+
+- Breaking changes, see the README
+- Add X-4VR support
+
 ## 0.7
 
 - Add support for X-THL

@@ -1,15 +1,16 @@
 # pypx800 - Python GCE IPX800
 
-Control the IPX800, X-PWM, X-THL, X-8R, X-8D, X-24D and X-Dimmer trough:
+Control the IPX800, X-PWM, X-THL, X-4VR, X-8R, X-8D, X-24D and X-Dimmer trough:
 
-- relay
-- virtual output
-- virtual input
-- digital input
-- analog input
-- xdimmer output
-- xpwm channel
-- xthl
+- Relay
+- Virtual output
+- Virtual input
+- Digital input
+- Analog input
+- X-Dimmer output
+- X-PWM channel
+- X-THL (temp, hum, lux)
+- X-4VR output
 
 ## Parameters
 
@@ -22,54 +23,62 @@ Control the IPX800, X-PWM, X-THL, X-8R, X-8D, X-24D and X-Dimmer trough:
 ## Example
 
 ```python
-from pypx800 import IPX800 as pypx800
+from pypx800 import *
 
-ipx = pypx800('192.168.1.240','80','apikey','user', 'password')
+ipx = IPX800('192.168.1.240','80','apikey','user', 'password')
+print (ipx.ping())
 values = ipx.global_get()
 print (values)
 
 # Relay
-r14 = ipx.relays[14]
+r14 = Relay(ipx, 14)
 r14.on()
 print (r14.status)
 r14.off()
 
 # X-Dimmer
-g1 = ipx.xdimmers[3]
+g1 = XDimmer(ipx, 3)
 g1.on()
 g1.set_level(80)
 print (g1.level)
 print (g1.status)
 
 # X-PWM
-pwm1 = ipx.xpwm[5]
+pwm1 = XPWM(ipx, 12)
 pwm1.on()
 pwm1.set_level(50)
 print (pwm1.status)
 pwm1.off()
 
 # Analog Input
-print (ipx.analogin[1].value)
+print (AInput(1).value)
 
 # Digital Input
-d1 = ipx.digitalin[1]
+d1 = Dintput(ipx, 1)
 print (d1.value)
 
 # Virtual Input
-vi = ipx.virtualinput[4]
+vi = VInput(ipx, 3)
 vi.on()
 print (vi.status)
 
 # Virtual Output
-vo = ipx.virtualoutput[4]
+vo = VOutput(ipx, 12)
 vo.on()
 print (vo.status)
 
 # X-THL
-sensor = ipx.xthl[1]
+sensor = XTHRL(ipx, 1)
 print (sensor.temp)
 print (sensor.hum)
 print (sensor.lum)
+
+# X-4VR
+vr = X4VR(ipx, 1, 3) # Extension number, VR number
+vr.on()
+vr.level(30)
+print (vr.status)
+print (vr.level)
 ```
 
 ## Credits

@@ -17,15 +17,6 @@ class IPX800:
         self._api_url = f"http://{host}:{port}/api/xdevices.json"
         self._cgi_url = f"http://{username}:{password}@{host}:{port}/user/api.cgi"
 
-        self.relays = GenericSlice(self, Relay, {"Get": "R"})
-        self.xdimmers = GenericSlice(self, XDimmer, {"Get": "G"})
-        self.xpwm = GenericSlice(self, XPWM, {"Get": "XPWM"})
-        self.virtualout = GenericSlice(self, VO, {"Get": "VO"})
-        self.virtualin = GenericSlice(self, VI, {"Get": "VI"})
-        self.analogin = GenericSlice(self, AInput, {"Get": "A"})
-        self.digitalin = GenericSlice(self, DInput, {"Get": "D"})
-        self.xthl = GenericSlice(self, XTHL, {"Get": "XTHL"})
-
     def _request_api(self, params):
         params_with_api = {"key": self.api_key}
         params_with_api.update(params)
@@ -69,31 +60,6 @@ class IPX800:
             self._request_api({"Get": "XPWM|1-24"})
         )  # add separated XPWM values
         return values
-
-
-class GenericSlice(collections.abc.Sequence):
-    """Slice implementation for an iterable over GCE objects"""
-
-    def __init__(self, ipx, gce_type, request_arg=None):
-        self._ipx = ipx
-        self._length = None
-        self._type = gce_type
-        self._rarg = request_arg
-
-    def __getitem__(self, key):
-        if isinstance(key, slice):
-            return [
-                self._type(self._ipx, k) for k in range(key.start, key.stop, key.step)
-            ]
-        elif isinstance(key, int):
-            return self._type(self._ipx, key)
-        else:
-            raise TypeError("Slice of 'int' is the only accepted range")
-
-    def __len__(self):
-        if self._length is None:
-            self._length = len(self._ipx._request(self._rarg))
-        return self._length
 
 
 class Relay(IPX800):
@@ -342,3 +308,45 @@ class XTHL(IPX800):
         params = {"Get": "XTHL"}
         response = self._request_api(params)
         return response[f"THL{self.id}-LUM"]
+
+
+class VR(IPX800):
+    """Representing an X-Dimmer out."""
+
+    def __init__(self, ipx, ext_id: int, vr_id: int):
+        super().__init__(ipx.host, ipx.port, ipx.api_key, ipx.username, ipx.password)
+        self.ext_id = ext_id
+        self.vr_id = vr_id
+        self.vr_number = ext_id * vr_id
+
+    @property
+    def status(self) -> bool:
+        """Return the current VR status."""
+        params = {"Get": f"VR{self.ext_id}"}
+        response = self._request_api(params)
+        return response[f"VR{self.ext_id}-{self.vr_id}"] > 0
+
+    @property
+    def level(self) -> int:
+        """Return the current VR level."""
+        params = {"Get": f"VR{self.ext_id}"}
+        response = self._request_api(params)
+        return int(response[f"VR{self.ext_id}-{self.vr_id}"])
+
+    def on(self) -> bool:
+        """Open VR."""
+        params = {f"SetVR{self.vr_number:02}": "100"}
+        self._request_api(params)
+        return True
+
+    def off(self, time=DEFAULT_TRANSITION) -> bool:
+        """Close VR."""
+        params = {f"SetVR{self.vr_number:02}": "0"}
+        self._request_api(params)
+        return True
+
+    def set_level(self, level) -> bool:
+        """Set VR level."""
+        params = {f"SetVR{self.vr_number:02}": str(level)}
+        self._request_api(params)
+        return True
