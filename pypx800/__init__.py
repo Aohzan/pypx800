@@ -95,7 +95,7 @@ class Relay(IPX800):
         return True
 
 
-class VO(IPX800):
+class VOutput(IPX800):
     """Representing an IPX800 Virtual Out."""
 
     def __init__(self, ipx, relay_id: int):
@@ -124,7 +124,7 @@ class VO(IPX800):
         return True
 
 
-class VI(IPX800):
+class VInput(IPX800):
     """Representing an IPX800 Virtual In."""
 
     def __init__(self, ipx, relay_id: int):
@@ -310,7 +310,7 @@ class XTHL(IPX800):
         return response[f"THL{self.id}-LUM"]
 
 
-class VR(IPX800):
+class X4VR(IPX800):
     """Representing an X-Dimmer out."""
 
     def __init__(self, ipx, ext_id: int, vr_id: int):
