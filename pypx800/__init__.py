@@ -324,14 +324,14 @@ class X4VR(IPX800):
         """Return the current VR status."""
         params = {"Get": f"VR{self.ext_id}"}
         response = self._request_api(params)
-        return response[f"VR{self.ext_id}-{self.vr_id}"] > 0
+        return response[f"VR{self.ext_id}-{self.vr_id}"] < 100
 
     @property
     def level(self) -> int:
         """Return the current VR level."""
         params = {"Get": f"VR{self.ext_id}"}
         response = self._request_api(params)
-        return int(response[f"VR{self.ext_id}-{self.vr_id}"])
+        return 100 - int(response[f"VR{self.ext_id}-{self.vr_id}"])
 
     def on(self) -> bool:
         """Open VR."""

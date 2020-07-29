@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1
+
+- Fix VR position
+
 ## 1.0
 
 - Breaking changes, see the README
