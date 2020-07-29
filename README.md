@@ -38,15 +38,18 @@ r14.off()
 
 # X-Dimmer
 g1 = XDimmer(ipx, 3)
-g1.on()
-g1.set_level(80)
+g1.on() # default 0.5 second delay
+g1.set_level(80) # default 0.5 second delay
+g1.set_level(20, 0) # 0 second delay
 print (g1.level)
 print (g1.status)
 
 # X-PWM
 pwm1 = XPWM(ipx, 12)
-pwm1.on()
-pwm1.set_level(50)
+pwm1.on() # default 0.5 second delay
+pwm1.on(1000) # 1 second delay
+pwm1.set_level(50) # default 0.5 second delay
+pwm1.set_level(20, 0) # 0 second delay
 print (pwm1.status)
 pwm1.off()
 
