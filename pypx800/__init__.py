@@ -345,8 +345,8 @@ class X4VR(IPX800):
         self._request_api(params)
         return True
 
-    def set_level(self, level) -> bool:
+    def set_level(self, level: int) -> bool:
         """Set VR level."""
-        params = {f"SetVR{self.vr_number:02}": str(level)}
+        params = {f"SetVR{self.vr_number:02}": str(100 - level)}
         self._request_api(params)
         return True

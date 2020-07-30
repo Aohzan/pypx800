@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2
+
+- Fix set VR position
+
 ## 1.1
 
 - Fix VR position
