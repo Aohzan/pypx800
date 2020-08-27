@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3
+
+- Add Stop for VR
+
 ## 1.2
 
 - Fix set VR position

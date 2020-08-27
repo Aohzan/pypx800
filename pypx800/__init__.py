@@ -339,9 +339,15 @@ class X4VR(IPX800):
         self._request_api(params)
         return True
 
-    def off(self, time=DEFAULT_TRANSITION) -> bool:
+    def off(self) -> bool:
         """Close VR."""
         params = {f"SetVR{self.vr_number:02}": "0"}
+        self._request_api(params)
+        return True
+
+    def stop(self) -> bool:
+        """Stop VR."""
+        params = {f"SetVR{self.vr_number:02}": "101"}
         self._request_api(params)
         return True
 
