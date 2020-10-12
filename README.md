@@ -1,6 +1,6 @@
 # pypx800 - Python GCE IPX800
 
-Control the IPX800, X-PWM, X-THL, X-4VR, X-8R, X-8D, X-24D and X-Dimmer trough:
+Control the IPX800, X-PWM, X-THL, X-4VR, X-4FP, X-8R, X-8D, X-24D and X-Dimmer trough:
 
 - Relay
 - Virtual output
@@ -82,6 +82,11 @@ vr.on()
 vr.level(30)
 print (vr.status)
 print (vr.level)
+
+# X-4FP
+fp = X4FP(ipx, 1, 3) # FP number, Zone number
+fp.set(2) # 0 confort, 1 Eco, 2 Hors Gel, 3 Stop, 4 Confort -1, 5 Confort -2
+print (fp.status)
 ```
 
 ## Credits

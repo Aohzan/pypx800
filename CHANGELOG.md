@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.6
+
+- Add X-4FP support
+
+## 1.5
+
+- Fix cover id with many extensions
+
+## 1.4
+
+- Fix
+
 ## 1.3
 
 - Add Stop for VR

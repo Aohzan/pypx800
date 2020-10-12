@@ -251,7 +251,8 @@ class XPWM(IPX800):
 
     def set_level(self, level, time=DEFAULT_TRANSITION) -> bool:
         """Turn on a X-PWM and return True if it was successful."""
-        params = {f"SetPWM": self.id, "PWMValue": str(int(level)), "PWMDelay": time}
+        params = {f"SetPWM": self.id, "PWMValue": str(
+            int(level)), "PWMDelay": time}
         self._request_cgi(params)
         return True
 
@@ -311,13 +312,13 @@ class XTHL(IPX800):
 
 
 class X4VR(IPX800):
-    """Representing an X-Dimmer out."""
+    """Representing an X-4VR output."""
 
     def __init__(self, ipx, ext_id: int, vr_id: int):
         super().__init__(ipx.host, ipx.port, ipx.api_key, ipx.username, ipx.password)
         self.ext_id = ext_id
         self.vr_id = vr_id
-        self.vr_number = ext_id * vr_id
+        self.vr_number = (ext_id - 1) * 4 + vr_id
 
     @property
     def status(self) -> bool:
@@ -335,13 +336,13 @@ class X4VR(IPX800):
 
     def on(self) -> bool:
         """Open VR."""
-        params = {f"SetVR{self.vr_number:02}": "100"}
+        params = {f"SetVR{self.vr_number:02}": "0"}
         self._request_api(params)
         return True
 
     def off(self) -> bool:
         """Close VR."""
-        params = {f"SetVR{self.vr_number:02}": "0"}
+        params = {f"SetVR{self.vr_number:02}": "100"}
         self._request_api(params)
         return True
 
@@ -354,5 +355,28 @@ class X4VR(IPX800):
     def set_level(self, level: int) -> bool:
         """Set VR level."""
         params = {f"SetVR{self.vr_number:02}": str(100 - level)}
+        self._request_api(params)
+        return True
+
+
+class X4FP(IPX800):
+    """Representing an X-4FP output."""
+
+    def __init__(self, ipx, fp_id: int, zone_id: int):
+        super().__init__(ipx.host, ipx.port, ipx.api_key, ipx.username, ipx.password)
+        self.fp_id = fp_id
+        self.zone_id = zone_id
+        self.fp_number = (fp_id - 1) * 4 + zone_id
+
+    @property
+    def status(self) -> bool:
+        """Return the current FP status."""
+        params = {"Get": f"FP"}
+        response = self._request_api(params)
+        return response[f"FP{self.fp_id} Zone {self.zone_id}"]
+
+    def set(self, mode) -> bool:
+        """Set FP mode."""
+        params = {f"SetFP{self.fp_number:02}": mode}
         self._request_api(params)
         return True
