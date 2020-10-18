@@ -85,7 +85,8 @@ print (vr.level)
 
 # X-4FP
 fp = X4FP(ipx, 1, 3) # FP number, Zone number
-fp.set(2) # 0 confort, 1 Eco, 2 Hors Gel, 3 Stop, 4 Confort -1, 5 Confort -2
+fp.set_mode(2) # 0 confort, 1 Eco, 2 Hors Gel, 3 Stop, 4 Confort -1, 5 Confort -2
+fp.set_mode_all(2) # for all FP
 print (fp.status)
 ```
 

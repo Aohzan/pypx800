@@ -375,8 +375,14 @@ class X4FP(IPX800):
         response = self._request_api(params)
         return response[f"FP{self.fp_id} Zone {self.zone_id}"]
 
-    def set(self, mode) -> bool:
+    def set_mode(self, mode) -> bool:
         """Set FP mode."""
         params = {f"SetFP{self.fp_number:02}": mode}
+        self._request_api(params)
+        return True
+
+    def set_mode_all(self, mode) -> bool:
+        """Set FP mode for all zones."""
+        params = {f"SetFP00": mode}
         self._request_api(params)
         return True
