@@ -11,6 +11,7 @@ Control the IPX800, X-PWM, X-THL, X-4VR, X-4FP, X-8R, X-8D, X-24D and X-Dimmer t
 - X-PWM channel
 - X-THL (temp, hum, lux)
 - X-4VR output
+- X-4FP zone
 
 ## Parameters
 
@@ -84,9 +85,9 @@ print (vr.status)
 print (vr.level)
 
 # X-4FP
-fp = X4FP(ipx, 1, 3) # FP number, Zone number
+fp = X4FP(ipx, 1, 3) # Extension number, Zone number
 fp.set_mode(2) # 0 confort, 1 Eco, 2 Hors Gel, 3 Stop, 4 Confort -1, 5 Confort -2
-fp.set_mode_all(2) # for all FP
+fp.set_mode_all(2) # set for all zones
 print (fp.status)
 ```
 

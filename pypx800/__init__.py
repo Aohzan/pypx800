@@ -7,7 +7,7 @@ DEFAULT_TRANSITION = 500
 class IPX800:
     """Class representing the IPX800 and its API"""
 
-    def __init__(self, host, port, api_key, username="Undefined", password="Undefined"):
+    def __init__(self, host, port, api_key, username="", password=""):
         self.host = host
         self.port = port
         self.api_key = api_key
@@ -362,18 +362,18 @@ class X4VR(IPX800):
 class X4FP(IPX800):
     """Representing an X-4FP output."""
 
-    def __init__(self, ipx, fp_id: int, zone_id: int):
+    def __init__(self, ipx, ext_id: int, zone_id: int):
         super().__init__(ipx.host, ipx.port, ipx.api_key, ipx.username, ipx.password)
-        self.fp_id = fp_id
+        self.ext_id = ext_id
         self.zone_id = zone_id
-        self.fp_number = (fp_id - 1) * 4 + zone_id
+        self.fp_number = (ext_id - 1) * 4 + zone_id
 
     @property
     def status(self) -> bool:
         """Return the current FP status."""
         params = {"Get": f"FP"}
         response = self._request_api(params)
-        return response[f"FP{self.fp_id} Zone {self.zone_id}"]
+        return response[f"FP{self.ext_id} Zone {self.zone_id}"]
 
     def set_mode(self, mode) -> bool:
         """Set FP mode."""

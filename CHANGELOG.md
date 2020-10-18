@@ -1,8 +1,9 @@
 # Changelog
 
-## 1.6
+## 1.6.2
 
 - Add X-4FP support
+- Fix optional parameters
 
 ## 1.5
 
