@@ -18,8 +18,9 @@ Control the IPX800, X-PWM, X-THL, X-4VR, X-4FP, X-8R, X-8D, X-24D and X-Dimmer t
 - host: ip or hostname
 - port
 - api key
-- user: name of user or admin (for X-PWM control only)
-- password: password of user or admin (for X-PWM control only)
+- user: name of user or admin (for X-PWM only)
+- password: password of user or admin (for X-PWM only)
+- retries: number of request retries on error (default: 3)
 
 ## Example
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.8.0
+
+- Retry request n times before raise an exception (3 by default)
+- No boolean return for action anymore
+- No XPWM request if no username specified
+
+## 1.7.0
+
+- Add transition for lights toggle
+
 ## 1.6.2
 
 - Add X-4FP support

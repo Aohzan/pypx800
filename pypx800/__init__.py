@@ -1,5 +1,6 @@
 import collections
 import requests
+from time import sleep
 
 DEFAULT_TRANSITION = 500
 
@@ -7,44 +8,54 @@ DEFAULT_TRANSITION = 500
 class IPX800:
     """Class representing the IPX800 and its API"""
 
-    def __init__(self, host, port, api_key, username="", password=""):
+    def __init__(self, host, port, api_key, username="", password="", retries=3):
         self.host = host
         self.port = port
         self.api_key = api_key
         self.username = username
         self.password = password
 
+        self.retries = retries
+
         self._api_url = f"http://{host}:{port}/api/xdevices.json"
         self._cgi_url = f"http://{username}:{password}@{host}:{port}/user/api.cgi"
 
     def _request_api(self, params):
+        request_retries = self.retries
         params_with_api = {"key": self.api_key}
         params_with_api.update(params)
         r = requests.get(self._api_url, params=params_with_api, timeout=2)
-        r.raise_for_status()
-        content = r.json()
-        result = content.get("status", None)
-        if result == "Success":
-            return content
-        else:
-            raise Exception(
-                "IPX800 api request error, url: %s`r%s",
-                f"{r.request.url[0:r.request.url.index('?key=') + 5]}removed{r.request.url[r.request.url.index('&')::]}",
-                content,
-            )
+        while request_retries > 0:
+            r.raise_for_status()
+            content = r.json()
+            result = content.get("status", None)
+            if result == "Success":
+                return content
+            request_retries -= 1
+            sleep(1)
+            pass
+        raise Exception(
+            "IPX800 api request error, url: %s`r%s",
+            f"{r.request.url[0:r.request.url.index('?key=') + 5]}removed{r.request.url[r.request.url.index('&')::]}",
+            content,
+        )
 
     def _request_cgi(self, params):
+        request_retries = self.retries
         r = requests.get(self._cgi_url, params=params, timeout=2)
-        r.raise_for_status()
-        content = r.text
-        if "Success" in content:
-            return content
-        else:
-            raise Exception(
-                "IPX800 cgi request error, url: %s`r%s",
-                f"{r.request.url[0:r.request.url.index('http://') + 7]}removed{r.request.url[r.request.url.index('@')::]}",
-                r.request.content,
-            )
+        while request_retries > 0:
+            r.raise_for_status()
+            content = r.text
+            if "Success" in content:
+                return content
+            request_retries -= 1
+            sleep(1)
+            pass
+        raise Exception(
+            "IPX800 cgi request error, url: %s`r%s",
+            f"{r.request.url[0:r.request.url.index('http://') + 7]}removed{r.request.url[r.request.url.index('@')::]}",
+            r.request.content,
+        )
 
     def ping(self):
         try:
@@ -56,9 +67,11 @@ class IPX800:
 
     def global_get(self):
         values = self._request_api({"Get": "all"})
-        values.update(
-            self._request_api({"Get": "XPWM|1-24"})
-        )  # add separated XPWM values
+        # add separated XPWM values if username for control them have been specified
+        if self.username:
+            values.update(
+                self._request_api({"Get": "XPWM|1-24"})
+            )
         return values
 
 
@@ -76,23 +89,20 @@ class Relay(IPX800):
         response = self._request_api(params)
         return response[f"R{self.id}"] == 1
 
-    def on(self) -> bool:
-        """Turn on a relay and return True if it was successful."""
+    def on(self):
+        """Turn on a relay."""
         params = {"SetR": self.id}
         self._request_api(params)
-        return True
 
-    def off(self) -> bool:
-        """Turn off a relay and return True if it was successful."""
+    def off(self):
+        """Turn off a relay."""
         params = {"ClearR": self.id}
         self._request_api(params)
-        return True
 
-    def toggle(self) -> bool:
-        """Toggle a relay and return True if it was successful."""
+    def toggle(self):
+        """Toggle a relay."""
         params = {"ToggleR": self.id}
         self._request_api(params)
-        return True
 
 
 class VOutput(IPX800):
@@ -108,20 +118,17 @@ class VOutput(IPX800):
         response = self._request_api(params)
         return response[f"VO{self.id}"] == 1
 
-    def on(self) -> bool:
+    def on(self):
         params = {"SetVO": self.id}
         self._request_api(params)
-        return True
 
-    def off(self) -> bool:
+    def off(self):
         params = {"ClearVO": self.id}
         self._request_api(params)
-        return True
 
-    def toggle(self) -> bool:
+    def toggle(self):
         params = {"ToggleVO": self.id}
         self._request_api(params)
-        return True
 
 
 class VInput(IPX800):
@@ -137,20 +144,17 @@ class VInput(IPX800):
         response = self._request_api(params)
         return response[f"VI{self.id}"] == 1
 
-    def on(self) -> bool:
+    def on(self):
         params = {"SetVI": self.id}
         self._request_api(params)
-        return True
 
-    def off(self) -> bool:
+    def off(self):
         params = {"ClearVI": self.id}
         self._request_api(params)
-        return True
 
-    def toggle(self) -> bool:
+    def toggle(self):
         params = {"ToggleVI": self.id}
         self._request_api(params)
-        return True
 
 
 class XDimmer(IPX800):
@@ -174,31 +178,27 @@ class XDimmer(IPX800):
         response = self._request_api(params)
         return response[f"G{self.id}"]["Valeur"]
 
-    def on(self, time=DEFAULT_TRANSITION) -> bool:
-        """Turn on a X-Dimmer and return True if it was successful."""
+    def on(self, time=DEFAULT_TRANSITION):
+        """Turn on a X-Dimmer."""
         params = {f"SetG{self.id:02}": "101", "Time": time}
         self._request_api(params)
-        return True
 
-    def off(self, time=DEFAULT_TRANSITION) -> bool:
-        """Turn off a X-Dimmer and return True if it was successful."""
+    def off(self, time=DEFAULT_TRANSITION):
+        """Turn off a X-Dimmer."""
         params = {f"SetG{self.id:02}": "0", "Time": time}
         self._request_api(params)
-        return True
 
-    def toggle(self) -> bool:
-        """Toggle a X-Dimmer and return True if it was successful."""
+    def toggle(self, time=DEFAULT_TRANSITION):
+        """Toggle a X-Dimmer."""
         if self.status:
-            self.off()
-            return False
-        self.on()
-        return True
+            self.off(time)
+        else:
+            self.on(time)
 
-    def set_level(self, level, time=DEFAULT_TRANSITION) -> bool:
-        """Turn on a X-Dimmer and return True if it was successful."""
+    def set_level(self, level, time=DEFAULT_TRANSITION):
+        """Turn on a X-Dimmer."""
         params = {f"SetG{self.id:02}": str(int(level)), "Time": time}
         self._request_api(params)
-        return True
 
 
 class XPWM(IPX800):
@@ -229,32 +229,28 @@ class XPWM(IPX800):
         response = self._request_api(params)
         return response
 
-    def on(self, time=DEFAULT_TRANSITION) -> bool:
-        """Turn on a X-PWM and return True if it was successful."""
+    def on(self, time=DEFAULT_TRANSITION):
+        """Turn on a X-PWM."""
         params = {f"SetPWM": self.id, "PWMValue": "100", "PWMDelay": time}
         self._request_cgi(params)
-        return True
 
-    def off(self, time=DEFAULT_TRANSITION) -> bool:
-        """Turn off a X-PWM and return True if it was successful."""
+    def off(self, time=DEFAULT_TRANSITION):
+        """Turn off a X-PWM."""
         params = {f"SetPWM": self.id, "PWMValue": "0", "PWMDelay": time}
         self._request_cgi(params)
-        return True
 
-    def toggle(self) -> bool:
-        """Toggle a X-PWM and return True if it was successful."""
+    def toggle(self, time=DEFAULT_TRANSITION):
+        """Toggle a X-PWM."""
         if self.status:
-            self.off()
-            return False
-        self.on()
-        return True
+            self.off(time)
+        else:
+            self.on(time)
 
-    def set_level(self, level, time=DEFAULT_TRANSITION) -> bool:
-        """Turn on a X-PWM and return True if it was successful."""
+    def set_level(self, level, time=DEFAULT_TRANSITION):
+        """Turn on a X-PWM."""
         params = {f"SetPWM": self.id, "PWMValue": str(
             int(level)), "PWMDelay": time}
         self._request_cgi(params)
-        return True
 
 
 class AInput(IPX800):
@@ -334,29 +330,25 @@ class X4VR(IPX800):
         response = self._request_api(params)
         return 100 - int(response[f"VR{self.ext_id}-{self.vr_id}"])
 
-    def on(self) -> bool:
+    def on(self):
         """Open VR."""
         params = {f"SetVR{self.vr_number:02}": "0"}
         self._request_api(params)
-        return True
 
-    def off(self) -> bool:
+    def off(self):
         """Close VR."""
         params = {f"SetVR{self.vr_number:02}": "100"}
         self._request_api(params)
-        return True
 
-    def stop(self) -> bool:
+    def stop(self):
         """Stop VR."""
         params = {f"SetVR{self.vr_number:02}": "101"}
         self._request_api(params)
-        return True
 
-    def set_level(self, level: int) -> bool:
+    def set_level(self, level: int):
         """Set VR level."""
         params = {f"SetVR{self.vr_number:02}": str(100 - level)}
         self._request_api(params)
-        return True
 
 
 class X4FP(IPX800):
@@ -375,14 +367,12 @@ class X4FP(IPX800):
         response = self._request_api(params)
         return response[f"FP{self.ext_id} Zone {self.zone_id}"]
 
-    def set_mode(self, mode) -> bool:
+    def set_mode(self, mode):
         """Set FP mode."""
         params = {f"SetFP{self.fp_number:02}": mode}
         self._request_api(params)
-        return True
 
-    def set_mode_all(self, mode) -> bool:
+    def set_mode_all(self, mode):
         """Set FP mode for all zones."""
         params = {f"SetFP00": mode}
         self._request_api(params)
-        return True
