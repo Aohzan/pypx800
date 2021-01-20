@@ -1,6 +1,6 @@
 # pypx800 - Python GCE IPX800
 
-Control the IPX800, X-PWM, X-THL, X-4VR, X-4FP, X-8R, X-8D, X-24D and X-Dimmer trough:
+Control the IPX800 v4 ans its extensions: X-PWM, X-THL, X-4VR, X-4FP, X-8R, X-8D, X-24D and X-Dimmer trough:
 
 - Relay
 - Virtual output
