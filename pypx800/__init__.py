@@ -24,8 +24,8 @@ class IPX800:
         request_retries = self.retries
         params_with_api = {"key": self.api_key}
         params_with_api.update(params)
-        r = requests.get(self._api_url, params=params_with_api, timeout=2)
         while request_retries > 0:
+            r = requests.get(self._api_url, params=params_with_api, timeout=2)
             r.raise_for_status()
             content = r.json()
             result = content.get("status", None)
@@ -42,8 +42,8 @@ class IPX800:
 
     def _request_cgi(self, params):
         request_retries = self.retries
-        r = requests.get(self._cgi_url, params=params, timeout=2)
         while request_retries > 0:
+            r = requests.get(self._cgi_url, params=params, timeout=2)
             r.raise_for_status()
             content = r.text
             if "Success" in content:
