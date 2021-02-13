@@ -1,5 +1,6 @@
 import collections
 import requests
+from random import randrange
 from time import sleep
 
 DEFAULT_TRANSITION = 500
@@ -32,7 +33,7 @@ class IPX800:
             if result == "Success":
                 return content
             request_retries -= 1
-            sleep(1)
+            sleep(randrange(200, 800)/1000)
             pass
         raise Exception(
             "IPX800 api request error, url: %s`r%s",
@@ -49,7 +50,7 @@ class IPX800:
             if "Success" in content:
                 return content
             request_retries -= 1
-            sleep(1)
+            sleep(randrange(200, 800)/1000)
             pass
         raise Exception(
             "IPX800 cgi request error, url: %s`r%s",
