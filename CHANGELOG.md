@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.0
+
+- Rewrite with async support
+
 ## 1.8.0
 
 - Retry request n times before raise an exception (3 by default)
