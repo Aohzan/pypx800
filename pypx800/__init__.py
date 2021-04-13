@@ -1,13 +1,14 @@
 """Asynchronous Python client for the IPX800 v4 API."""
 
-from .ainput import AInput
-from .dinput import DInput
 from .ipx800 import (
     IPX800,
     Ipx800CannotConnectError,
     Ipx800InvalidAuthError,
     Ipx800RequestError,
 )
+
+from .ainput import AInput
+from .dinput import DInput
 from .relay import Relay
 from .vinput import VInput
 from .voutput import VOutput

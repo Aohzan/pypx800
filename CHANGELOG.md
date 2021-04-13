@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.1
+
+- Fix import order
+
 ## 2.1.0
 
 - Simplest objects import
