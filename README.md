@@ -28,20 +28,10 @@ Control the IPX800 v4 ans its extensions: X-PWM, X-THL, X-4VR, X-4FP, X-8R, X-8D
 ## Example
 
 ```python
-from pypx800 import IPX800
-from pypx800.relay import Relay
-from pypx800.xdimmer import XDimmer
-from pypx800.xpwm import XPWM
-from pypx800.ainput import AInput
-from pypx800.dinput import DInput
-from pypx800.vinput import VInput
-from pypx800.voutput import VOutput
-from pypx800.x4fp import X4FP
-from pypx800.x4vr import X4VR
-from pypx800.xthl import XTHL
-
 import asyncio
-from time import sleep
+
+from pypx800 import (IPX800, X4FP, X4VR, XPWM, XTHL, AInput, DInput, Relay,
+                     VInput, VOutput, XDimmer)
 
 
 async def main():

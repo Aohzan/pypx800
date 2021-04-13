@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0
+
+- Simplest objects import
+
 ## 2.0.0
 
 - Rewrite with async support
