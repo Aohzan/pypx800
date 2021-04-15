@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.2
+
+- Set check request status to True by default
+- Fix params order to avoid crash
+- Create session at init
+- Reduce default timeout
+  
 ## 2.1.1
 
 - Fix import order

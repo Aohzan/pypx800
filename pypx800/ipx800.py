@@ -24,8 +24,8 @@ class IPX800:
         username: str = None,
         password: str = None,
         request_retries: int = 3,
-        request_timeout: int = 10,
-        request_checkstatus: bool = False,
+        request_timeout: int = 5,
+        request_checkstatus: bool = True,
         session: aiohttp.client.ClientSession = None,
     ) -> None:
         """Init a IPX800v4 API."""
@@ -40,40 +40,40 @@ class IPX800:
         self._request_checkstatus = request_checkstatus
 
         self._api_url = f"http://{host}:{port}/api/xdevices.json"
-        self._cgi_url = f"http://{username}:{password}@{host}:{port}/user/api.cgi"
+        self._cgi_url = f"http://{host}:{port}/user/api.cgi"
 
         self._session = session
         self._close_session = False
 
-    async def request_api(self, params: dict) -> dict:
-        """Make a request to get the IPX800 JSON API."""
         if self._session is None:
             self._session = aiohttp.ClientSession()
             self._close_session = True
 
-        params.update({"key": self._api_key})
+    async def request_api(self, params: dict) -> dict:
+        """Make a request to get the IPX800 JSON API."""
+        params_with_api = {"key": self._api_key}
+        params_with_api.update(params)
 
         try:
             request_retries = self._request_retries
             while request_retries > 0:
                 with async_timeout.timeout(self._request_timeout):
-                    response = await self._session.request(
-                        "GET",
+                    response = await self._session.get(
                         self._api_url,
-                        params=params,
+                        params=params_with_api,
                     )
 
                 if response.status:
                     content = await response.json()
                     response.close()
-                    if self._request_checkstatus:
-                        if content.get("status") != "Success":
-                            pass
-                    return content
+
+                    if (
+                        not self._request_checkstatus
+                        or content.get("status") == "Success"
+                    ):
+                        return content
 
                 request_retries -= 1
-                sleep(1)
-                pass
 
             raise Ipx800RequestError("IPX800 API request error")
 
@@ -88,19 +88,17 @@ class IPX800:
 
     async def request_cgi(self, params: dict) -> dict:
         """Make a request to get the IPX800 CGI API."""
-        if self._session is None:
-            self._session = aiohttp.ClientSession()
-            self._close_session = True
-
-        params.update({"key": self._api_key})
+        auth = None
+        if self._username and self._password:
+            auth = aiohttp.BasicAuth(self._username, self._password)
 
         try:
             request_retries = self._request_retries
             while request_retries > 0:
                 with async_timeout.timeout(self._request_timeout):
-                    response = await self._session.request(
-                        "GET",
+                    response = await self._session.get(
                         self._cgi_url,
+                        auth=auth,
                         params=params,
                     )
 
@@ -110,14 +108,11 @@ class IPX800:
                 if response.status:
                     content = await response.text()
                     response.close()
-                    if self._request_checkstatus:
-                        if "Success" not in content:
-                            pass
-                    return content
+                    if not self._request_checkstatus or "Success" in content:
+                        return content
 
                 request_retries -= 1
                 sleep(1)
-                pass
 
             raise Ipx800RequestError("IPX800 API request error")
 
@@ -131,10 +126,10 @@ class IPX800:
             ) from exception
 
     async def ping(self) -> bool:
-        """Return True if the IPX800 answer."""
+        """Return True if the IPX800 answer to API request."""
         try:
-            await self.request_api({"Get": "R"})
-            return True
+            result = await self.request_api({"Get": "R"})
+            return result.get("status") == "Success"
         except Ipx800CannotConnectError:
             pass
         return False

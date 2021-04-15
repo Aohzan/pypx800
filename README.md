@@ -21,8 +21,8 @@ Control the IPX800 v4 ans its extensions: X-PWM, X-THL, X-4VR, X-4FP, X-8R, X-8D
 - user: name of user or admin (for X-PWM only)
 - password: password of user or admin (for X-PWM only)
 - request_retries: number of request retries on error (default: `3`)
-- request_timeout: timeout for request (default: `10`)
-- request_checkstatus: true to raise error if IPX800 return no success result like partial result (default: `False`)
+- request_timeout: timeout for request (default: `5`)
+- request_checkstatus: true to raise error if IPX800 return no success result like partial result, after `request_retries` retries (default: `True`)
 - session: aiohttp.client.ClientSession
 
 ## Example
