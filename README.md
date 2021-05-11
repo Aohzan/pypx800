@@ -30,7 +30,7 @@ Control the IPX800 v4 ans its extensions: X-PWM, X-THL, X-4VR, X-4FP, X-8R, X-8D
 ```python
 import asyncio
 
-from pypx800 import (IPX800, X4FP, X4VR, XPWM, XTHL, AInput, DInput, Relay,
+from pypx800 import (IPX800, X4FP, X4VR, XPWM, XTHL, AInput, VAInput, DInput, Relay,
                      VInput, VOutput, XDimmer)
 
 
@@ -38,13 +38,14 @@ async def main():
     async with IPX800(host='192.168.1.123', api_key='xxx') as ipx:
         data = await ipx.global_get()
         print("all values:", data)
-        # Relay
+        
+        print("## Relay ##")
         r15 = Relay(ipx, 15)
         print(await r15.status)
         await r15.on()
         await r15.off()
 
-        # X-Dimmer
+        print("## X-Dimmer ##")
         g1 = XDimmer(ipx, 1)
         await g1.on()  # default 500 milliseconds
         await g1.set_level(80)  # default 500 milliseconds delay
@@ -52,8 +53,8 @@ async def main():
         await g1.off(2000)  # 2 seconds delay
         print(await g1.level)
         print(await g1.status)
-
-        # X-PWM
+        
+        print("## X-PWM ##")
         pwm1 = XPWM(ipx, 1)
         await pwm1.on()  # default 500 milliseconds delay
         await pwm1.on(1000)  # 1 second delay
@@ -61,42 +62,46 @@ async def main():
         await pwm1.set_level(20, 0)  # 0 millisecond delay
         print(await pwm1.status)
         await pwm1.off()
-
-        # Analog Input
+        
+        print("## Analog Input ##")
         print(await AInput(ipx, 1).value)
 
-        # Digital Input
+        print("## Virtual Analog Input ##")
+        print(await VAInput(ipx, 1).value)
+    
+        print("## Digital Output ##")
         d1 = DInput(ipx, 1)
         print(await d1.value)
 
-        # Virtual Input
+        print("## Virtual Input ##")
         vi = VInput(ipx, 3)
         await vi.on()
         print(await vi.status)
 
-        # Virtual Output
+        print("## Virtual Output ##")
         vo = VOutput(ipx, 12)
         await vo.on()
         print(await vo.status)
 
-        # X-THL
+        print("## X-THL ##")
         sensor = XTHL(ipx, 1)
         print(await sensor.temp)
         print(await sensor.hum)
         print(await sensor.lum)
 
-        # X-4VR
+        print("## X-4VR ##")
         vr = X4VR(ipx, 1, 3)  # Extension number, VR number
         await vr.on()
         await vr.set_level(30)
         print(await vr.status)
         print(await vr.level)
 
-        # X-4FP
+        print("## X-4FP ##")
         fp = X4FP(ipx, 1, 3)  # Extension number, Zone number
         # 0 confort, 1 Eco, 2 Hors Gel, 3 Stop, 4 Confort -1, 5 Confort -2
-        await fp.set_mode(2)
-        await fp.set_mode_all(2)  # set for all zones
+        print(await fp.status)
+        await fp.set_mode(1)
+        await fp.set_mode_all(1)  # set for all zones
         print(await fp.status)
 
 

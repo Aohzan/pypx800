@@ -8,6 +8,7 @@ from .ipx800 import (
 )
 
 from .ainput import AInput
+from .vainput import VAInput
 from .dinput import DInput
 from .relay import Relay
 from .vinput import VInput
@@ -27,6 +28,7 @@ __all__ = [
     "XDimmer",
     "XPWM",
     "AInput",
+    "VAInput",
     "DInput",
     "VInput",
     "VOutput",
