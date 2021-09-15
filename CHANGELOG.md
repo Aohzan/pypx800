@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.3.0
+
+- Add pulse commands to X-4VR
+
 ## 2.2.0
 
 - Add Virtual Analog Input
@@ -10,7 +14,7 @@
 - Fix params order to avoid crash
 - Create session at init
 - Reduce default timeout
-  
+
 ## 2.1.1
 
 - Fix import order

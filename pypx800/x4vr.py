@@ -45,3 +45,13 @@ class X4VR:
         """Set cover level."""
         params = {f"SetVR{self.vr_number:02}": str(100 - level)}
         await self._ipx.request_api(params)
+
+    async def set_pulse_down(self, impulse: int) -> None:
+        """Set cover impulse down."""
+        params = {f"SetPulseDOWN{self.vr_number:02}": str(impulse)}
+        await self._ipx.request_api(params)
+
+    async def set_pulse_up(self, impulse: int) -> None:
+        """Set cover impulse up."""
+        params = {f"SetPulseUP{self.vr_number:02}": str(impulse)}
+        await self._ipx.request_api(params)

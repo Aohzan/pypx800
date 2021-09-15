@@ -93,6 +93,7 @@ async def main():
         vr = X4VR(ipx, 1, 3)  # Extension number, VR number
         await vr.on()
         await vr.set_level(30)
+        await vr.set_pulse_up(5)
         print(await vr.status)
         print(await vr.level)
 
