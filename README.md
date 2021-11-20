@@ -7,6 +7,7 @@ Control the IPX800 v4 ans its extensions: X-PWM, X-THL, X-4VR, X-4FP, X-8R, X-8D
 - Virtual input
 - Digital input
 - Analog input
+- Counter
 - X-Dimmer output
 - X-PWM channel
 - X-THL (temp, hum, lux)
@@ -20,6 +21,7 @@ Control the IPX800 v4 ans its extensions: X-PWM, X-THL, X-4VR, X-4FP, X-8R, X-8D
 - api_key: (mandatory)
 - user: name of user or admin (for X-PWM only)
 - password: password of user or admin (for X-PWM only)
+- specific_devices_types: add specific devices types for custom api request (supported: ["counter"])
 - request_retries: number of request retries on error (default: `3`)
 - request_timeout: timeout for request (default: `5`)
 - request_checkstatus: true to raise error if IPX800 return no success result like partial result, after `request_retries` retries (default: `True`)
@@ -38,7 +40,7 @@ async def main():
     async with IPX800(host='192.168.1.123', api_key='xxx') as ipx:
         data = await ipx.global_get()
         print("all values:", data)
-        
+
         print("## Relay ##")
         r15 = Relay(ipx, 15)
         print(await r15.status)
@@ -53,7 +55,7 @@ async def main():
         await g1.off(2000)  # 2 seconds delay
         print(await g1.level)
         print(await g1.status)
-        
+
         print("## X-PWM ##")
         pwm1 = XPWM(ipx, 1)
         await pwm1.on()  # default 500 milliseconds delay
@@ -62,13 +64,13 @@ async def main():
         await pwm1.set_level(20, 0)  # 0 millisecond delay
         print(await pwm1.status)
         await pwm1.off()
-        
+
         print("## Analog Input ##")
         print(await AInput(ipx, 1).value)
 
         print("## Virtual Analog Input ##")
         print(await VAInput(ipx, 1).value)
-    
+
         print("## Digital Output ##")
         d1 = DInput(ipx, 1)
         print(await d1.value)
@@ -105,6 +107,9 @@ async def main():
         await fp.set_mode_all(1)  # set for all zones
         print(await fp.status)
 
+        print("## Counter ##")
+        counter = Counter(ipx, 1)
+        print(await counter.value)
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

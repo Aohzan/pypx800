@@ -1,5 +1,5 @@
 """IPX800 X-Dimmer."""
-from . import IPX800
+from .ipx800 import IPX800
 
 DEFAULT_TRANSITION = 500
 
@@ -13,18 +13,23 @@ class XDimmer:
         self.id = relay_id
 
     @property
+    def key(self) -> str:
+        """Return the key to get the value from API call."""
+        return f"G{self.id}"
+
+    @property
     async def status(self) -> bool:
         """Return the current X-Dimmer status."""
         params = {"Get": "G"}
         response = await self._ipx.request_api(params)
-        return response[f"G{self.id}"]["Etat"] == "ON"
+        return response[self.key]["Etat"] == "ON"
 
     @property
     async def level(self) -> int:
         """Return the current X-Dimmer level."""
         params = {"Get": "G"}
         response = await self._ipx.request_api(params)
-        return response[f"G{self.id}"]["Valeur"]
+        return response[self.key]["Valeur"]
 
     async def on(self, time: int = DEFAULT_TRANSITION) -> None:
         """Turn on a X-Dimmer."""

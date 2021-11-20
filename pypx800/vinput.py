@@ -1,5 +1,5 @@
 """IPX800 Virtual Input."""
-from . import IPX800
+from .ipx800 import IPX800
 
 
 class VInput:
@@ -11,11 +11,16 @@ class VInput:
         self.id = relay_id
 
     @property
+    def key(self) -> str:
+        """Return the key to get the value from API call."""
+        return f"VI{self.id}"
+
+    @property
     async def status(self) -> bool:
         """Get status of a Virtual Input."""
         params = {"Get": "VI"}
         response = await self._ipx.request_api(params)
-        return response[f"VI{self.id}"] == 1
+        return response[self.key] == 1
 
     async def on(self) -> None:
         """Turn on a Virtual Input."""

@@ -6,11 +6,8 @@ from time import sleep
 import aiohttp
 import async_timeout
 
-from .exceptions import (
-    Ipx800CannotConnectError,
-    Ipx800InvalidAuthError,
-    Ipx800RequestError,
-)
+from .exceptions import (Ipx800CannotConnectError, Ipx800InvalidAuthError,
+                         Ipx800RequestError)
 
 
 class IPX800:
@@ -23,6 +20,7 @@ class IPX800:
         port: int = 80,
         username: str = None,
         password: str = None,
+        specific_devices_types: list = None,
         request_retries: int = 3,
         request_timeout: int = 5,
         request_checkstatus: bool = True,
@@ -38,6 +36,8 @@ class IPX800:
         self._request_retries = request_retries
         self._request_timeout = request_timeout
         self._request_checkstatus = request_checkstatus
+
+        self._devices_types = specific_devices_types if specific_devices_types is not None else []
 
         self._api_url = f"http://{host}:{port}/api/xdevices.json"
         self._cgi_url = f"http://{host}:{port}/user/api.cgi"
@@ -137,6 +137,9 @@ class IPX800:
     async def global_get(self) -> dict:
         """Get all values from the IPX800 answer."""
         values = await self.request_api({"Get": "all"})
+        # add counter values if present
+        if "counter" in self._devices_types:
+            values.update(await self.request_api({"Get": "C"}))
         # add separated XPWM values if username and password set
         if self._username and self._password:
             values.update(await self.request_api({"Get": "XPWM|1-24"}))

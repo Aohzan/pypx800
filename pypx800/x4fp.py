@@ -1,5 +1,5 @@
 """IPX800 X-4FP."""
-from . import IPX800
+from .ipx800 import IPX800
 
 
 class X4FP:
@@ -13,11 +13,16 @@ class X4FP:
         self.fp_number = (ext_id - 1) * 4 + zone_id
 
     @property
+    def key(self) -> str:
+        """Return the key to get the value from API call."""
+        return f"FP{self.ext_id} Zone {self.zone_id}"
+
+    @property
     async def status(self) -> bool:
         """Return the current FP status."""
         params = {"Get": "FP"}
         response = await self._ipx.request_api(params)
-        return response[f"FP{self.ext_id} Zone {self.zone_id}"]
+        return response[self.key]
 
     async def set_mode(self, mode) -> None:
         """Set FP mode."""

@@ -1,5 +1,5 @@
 """IPX800 relay."""
-from . import IPX800
+from .ipx800 import IPX800
 
 
 class Relay:
@@ -11,11 +11,16 @@ class Relay:
         self.id = relay_id
 
     @property
+    def key(self) -> str:
+        """Return the key to get the value from API call."""
+        return f"R{self.id}"
+
+    @property
     async def status(self) -> bool:
         """Return the current relay status."""
         params = {"Get": "R"}
         response = await self._ipx.request_api(params)
-        return response[f"R{self.id}"] == 1
+        return response[self.key] == 1
 
     async def on(self) -> None:
         """Turn on a relay."""

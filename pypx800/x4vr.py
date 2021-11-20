@@ -1,5 +1,5 @@
 """IPX800 X-4VR."""
-from . import IPX800
+from .ipx800 import IPX800
 
 
 class X4VR:
@@ -13,18 +13,23 @@ class X4VR:
         self.vr_number = (ext_id - 1) * 4 + vr_id
 
     @property
+    def key(self) -> str:
+        """Return the key to get the value from API call."""
+        return f"VR{self.ext_id}-{self.vr_id}"
+
+    @property
     async def status(self) -> bool:
         """Return the current cover status."""
         params = {"Get": f"VR{self.ext_id}"}
         response = await self._ipx.request_api(params)
-        return response[f"VR{self.ext_id}-{self.vr_id}"] < 100
+        return response[self.key] < 100
 
     @property
     async def level(self) -> int:
         """Return the current cover level."""
         params = {"Get": f"VR{self.ext_id}"}
         response = await self._ipx.request_api(params)
-        return 100 - int(response[f"VR{self.ext_id}-{self.vr_id}"])
+        return 100 - int(response[self.key])
 
     async def on(self) -> None:
         """Open cover."""

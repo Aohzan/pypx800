@@ -1,5 +1,5 @@
 """IPX800 X-PWM."""
-from . import IPX800
+from .ipx800 import IPX800
 
 DEFAULT_TRANSITION = 500
 
@@ -13,18 +13,23 @@ class XPWM:
         self.id = channel_id
 
     @property
+    def key(self) -> str:
+        """Return the key to get the value from API call."""
+        return f"PWM{self.id}"
+
+    @property
     async def status(self) -> bool:
         """Return the current X-PWM status."""
         params = {"Get": f"XPWM|{self.id}"}
         response = await self._ipx.request_api(params)
-        return response[f"PWM{self.id}"] > 0
+        return response[self.key] > 0
 
     @property
     async def level(self) -> int:
         """Return the current X-PWM level."""
         params = {"Get": f"XPWM|{self.id}"}
         response = await self._ipx.request_api(params)
-        return response[f"PWM{self.id}"]
+        return response[self.key]
 
     @property
     async def level_all_channels(self) -> int:

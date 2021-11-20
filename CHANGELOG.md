@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.4.0
+
+- Add counter support
+- Add key property to get value from global_get function
+
 ## 2.3.0
 
 - Add pulse commands to X-4VR
