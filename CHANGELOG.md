@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.0
+
+- Add set value for VA and Counter
+
 ## 2.4.0
 
 - Add counter support

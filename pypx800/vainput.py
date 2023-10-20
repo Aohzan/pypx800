@@ -21,3 +21,9 @@ class VAInput:
         params = {"Get": "VA"}
         response = await self._ipx.request_api(params)
         return response[self.key]
+
+
+    async def set_value(self, value: float) -> None:
+        """Set Virtual Analog input value."""
+        params = {f"SetVA{self.id:02}": value}
+        await self._ipx.request_api(params)
