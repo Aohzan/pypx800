@@ -1,13 +1,17 @@
 """Get information and control a GCE IPX800v4."""
+
 import asyncio
 import socket
 from time import sleep
 
-import aiohttp
-import async_timeout
+from aiohttp import BasicAuth, ClientError, ClientSession
+from async_timeout import timeout
 
-from .exceptions import (Ipx800CannotConnectError, Ipx800InvalidAuthError,
-                         Ipx800RequestError)
+from .exceptions import (
+    Ipx800CannotConnectError,
+    Ipx800InvalidAuthError,
+    Ipx800RequestError,
+)
 
 
 class IPX800:
@@ -18,13 +22,13 @@ class IPX800:
         host: str,
         api_key: str,
         port: int = 80,
-        username: str = None,
-        password: str = None,
-        specific_devices_types: list = None,
+        username: str | None = None,
+        password: str | None = None,
+        specific_devices_types: list | None = None,
         request_retries: int = 3,
         request_timeout: int = 5,
         request_checkstatus: bool = True,
-        session: aiohttp.client.ClientSession = None,
+        session: ClientSession = None,
     ) -> None:
         """Init a IPX800v4 API."""
         self.host = host
@@ -37,7 +41,7 @@ class IPX800:
         self._request_timeout = request_timeout
         self._request_checkstatus = request_checkstatus
 
-        self._devices_types = specific_devices_types if specific_devices_types is not None else []
+        self._devices_types = specific_devices_types if specific_devices_types else []
 
         self._api_url = f"http://{host}:{port}/api/xdevices.json"
         self._cgi_url = f"http://{host}:{port}/user/api.cgi"
@@ -46,7 +50,7 @@ class IPX800:
         self._close_session = False
 
         if self._session is None:
-            self._session = aiohttp.ClientSession()
+            self._session = ClientSession()
             self._close_session = True
 
     async def request_api(self, params: dict) -> dict:
@@ -57,7 +61,7 @@ class IPX800:
         try:
             request_retries = self._request_retries
             while request_retries > 0:
-                with async_timeout.timeout(self._request_timeout):
+                async with timeout(self._request_timeout):
                     response = await self._session.get(
                         self._api_url,
                         params=params_with_api,
@@ -81,7 +85,7 @@ class IPX800:
             raise Ipx800CannotConnectError(
                 "Timeout occurred while connecting to IPX800."
             ) from exception
-        except (aiohttp.ClientError, socket.gaierror) as exception:
+        except (ClientError, socket.gaierror) as exception:
             raise Ipx800CannotConnectError(
                 "Error occurred while communicating with the IPX800."
             ) from exception
@@ -90,12 +94,12 @@ class IPX800:
         """Make a request to get the IPX800 CGI API."""
         auth = None
         if self._username and self._password:
-            auth = aiohttp.BasicAuth(self._username, self._password)
+            auth = BasicAuth(self._username, self._password)
 
         try:
             request_retries = self._request_retries
             while request_retries > 0:
-                with async_timeout.timeout(self._request_timeout):
+                async with timeout(self._request_timeout):
                     response = await self._session.get(
                         self._cgi_url,
                         auth=auth,
@@ -120,7 +124,7 @@ class IPX800:
             raise Ipx800CannotConnectError(
                 "Timeout occurred while connecting to IPX800."
             ) from exception
-        except (aiohttp.ClientError, socket.gaierror) as exception:
+        except (ClientError, socket.gaierror) as exception:
             raise Ipx800CannotConnectError(
                 "Error occurred while communicating with the IPX800."
             ) from exception
