@@ -1,4 +1,5 @@
 """IPX800 Virtual Input."""
+
 from .ipx800 import IPX800
 
 

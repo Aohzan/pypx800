@@ -1,4 +1,5 @@
 """IPX800 X-4FP."""
+
 from .ipx800 import IPX800
 
 

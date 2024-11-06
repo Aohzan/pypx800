@@ -1,4 +1,5 @@
 """IPX800 Counter."""
+
 from .ipx800 import IPX800
 
 

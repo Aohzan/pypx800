@@ -1,4 +1,5 @@
 """IPX800 relay."""
+
 from .ipx800 import IPX800
 
 

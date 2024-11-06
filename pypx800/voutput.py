@@ -1,4 +1,5 @@
 """IPX800 Virtual Output."""
+
 from .ipx800 import IPX800
 
 

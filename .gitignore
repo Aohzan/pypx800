@@ -5,3 +5,4 @@ __pycache__
 publish
 .vscode/
 test.py
+.venv

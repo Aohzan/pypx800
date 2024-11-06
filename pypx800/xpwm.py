@@ -1,4 +1,5 @@
 """IPX800 X-PWM."""
+
 from .ipx800 import IPX800
 
 DEFAULT_TRANSITION = 500
@@ -32,8 +33,8 @@ class XPWM:
         return response[self.key]
 
     @property
-    async def level_all_channels(self) -> int:
-        """Return the current X-PWM level."""
+    async def level_all_channels(self) -> dict[str, int]:
+        """Return all current X-PWM levels."""
         params = {"Get": "XPWM|1-24"}
         return await self._ipx.request_api(params)
 
@@ -50,9 +51,9 @@ class XPWM:
     async def toggle(self, time: int = DEFAULT_TRANSITION) -> None:
         """Toggle a X-PWM."""
         if self.status:
-            self.off(time)
+            await self.off(time)
         else:
-            self.on(time)
+            await self.on(time)
 
     async def set_level(self, level, time: int = DEFAULT_TRANSITION) -> None:
         """Turn on a X-PWM."""

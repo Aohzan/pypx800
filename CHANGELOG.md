@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.5.1
+
+- Fix context error with request timeout
+- Lint
+
 ## 2.5.0
 
 - Add set value for VA and Counter

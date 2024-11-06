@@ -1,4 +1,5 @@
 """IPX800 X-THL."""
+
 from enum import Enum
 
 from .ipx800 import IPX800

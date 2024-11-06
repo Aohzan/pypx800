@@ -1,4 +1,5 @@
 """IPX800 X-Dimmer."""
+
 from .ipx800 import IPX800
 
 DEFAULT_TRANSITION = 500

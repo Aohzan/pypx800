@@ -1,11 +1,13 @@
+""" setup.py """
+
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="pypx800",
-    version="2.5.0",
+    version="2.5.1",
     author="Aohzan",
     author_email="aohzan@gmail.com",
     description="Control the IPX800 and some of its extensions.",
@@ -18,5 +20,5 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires=">=3.11",
 )
