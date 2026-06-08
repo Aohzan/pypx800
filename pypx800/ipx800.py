@@ -144,6 +144,8 @@ class IPX800:
         # add counter values if present
         if "counter" in self._devices_types:
             values.update(await self.request_api({"Get": "C"}))
+        if "virtualanalogin" in self._devices_types:
+            values.update(await self.request_api({"Get": "VA"}))           
         # add separated XPWM values if username and password set
         if self._username and self._password:
             values.update(await self.request_api({"Get": "XPWM|1-24"}))
