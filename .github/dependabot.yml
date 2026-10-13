@@ -1,0 +1,25 @@
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    cooldown:
+      default-days: 7
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Conventional commits ("chore(deps): ...") so semantic-release does not cut a release.
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+  - package-ecosystem: "uv"
+    cooldown:
+      default-days: 7
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Library: keep the dependency ranges open for Home Assistant, only update the lock file.
+    versioning-strategy: lockfile-only
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
