@@ -28,3 +28,20 @@ package = true
 
 [tool.setuptools.packages.find]
 include = ["pypx800*"]
+
+[tool.semantic_release]
+# Existing release tags have no "v" prefix
+tag_format = "{version}"
+version_toml = ["pyproject.toml:project.version"]
+build_command = """
+    pip install uv
+    uv lock --upgrade-package "$PACKAGE_NAME"
+    git add uv.lock
+    uv build
+"""
+
+[tool.semantic_release.changelog]
+default_templates = { changelog_file = "CHANGELOG.md" }
+exclude_commit_patterns = [
+    "^chore\\(deps",
+]
