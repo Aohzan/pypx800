@@ -2,6 +2,28 @@
 
 <!-- version list -->
 
+## v2.6.0 (2026-10-13)
+
+### Build System
+
+- Package with pyproject.toml and uv
+  ([`dc1b726`](https://github.com/Aohzan/pypx800/commit/dc1b7268d4ccb212a7e41fcdd4e66cade60b1fd6))
+
+### Continuous Integration
+
+- Keep actions and dependencies up to date with Dependabot
+  ([`6bdf137`](https://github.com/Aohzan/pypx800/commit/6bdf1376904463235494a91b9f355338f6fa605a))
+
+- Release to PyPI with python-semantic-release
+  ([`096c9c4`](https://github.com/Aohzan/pypx800/commit/096c9c44e6a66a4b37f9da93a74633f2749e83b6))
+
+### Features
+
+- Add support for virtual analog input from X200ph
+  ([#10](https://github.com/Aohzan/pypx800/pull/10),
+  [`320b555`](https://github.com/Aohzan/pypx800/commit/320b555c66b868c2f7ab0c93ecf6b6874451e34f))
+
+
 ## 2.5.1
 
 - Fix context error with request timeout
