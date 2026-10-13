@@ -1,0 +1,30 @@
+[project]
+name = "pypx800"
+version = "2.5.1"
+description = "Control the IPX800 and some of its extensions."
+authors = [{ name = "Aohzan", email = "aohzan@gmail.com" }]
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "aiohttp>=3.10.0",
+    "async-timeout>=4.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/aohzan/pypx800"
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+package = true
+
+[tool.setuptools.packages.find]
+include = ["pypx800*"]
