@@ -2,6 +2,19 @@
 
 <!-- version list -->
 
+## v2.6.1 (2026-10-27)
+
+### Bug Fixes
+
+- Annotate the CGI response as text and the optional session
+  ([#16](https://github.com/Aohzan/pypx800/pull/16),
+  [`dc3c9aa`](https://github.com/Aohzan/pypx800/commit/dc3c9aab181160460960aa1649ce8f529a9ce625))
+
+- Wait between the CGI retries without blocking the event loop
+  ([#17](https://github.com/Aohzan/pypx800/pull/17),
+  [`0123fec`](https://github.com/Aohzan/pypx800/commit/0123fece3defcdc991912ddaf8a9c2d39d8399f4))
+
+
 ## v2.6.0 (2026-10-13)
 
 ### Build System
