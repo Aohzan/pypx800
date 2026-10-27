@@ -2,7 +2,6 @@
 
 import asyncio
 import socket
-from time import sleep
 
 from aiohttp import BasicAuth, ClientError, ClientSession
 from async_timeout import timeout
@@ -116,7 +115,7 @@ class IPX800:
                         return content
 
                 request_retries -= 1
-                sleep(1)
+                await asyncio.sleep(1)
 
             raise Ipx800RequestError("IPX800 API request error")
 
