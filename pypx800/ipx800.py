@@ -27,7 +27,7 @@ class IPX800:
         request_retries: int = 3,
         request_timeout: int = 5,
         request_checkstatus: bool = True,
-        session: ClientSession = None,
+        session: ClientSession | None = None,
     ) -> None:
         """Init a IPX800v4 API."""
         self.host = host
@@ -89,7 +89,7 @@ class IPX800:
                 "Error occurred while communicating with the IPX800."
             ) from exception
 
-    async def request_cgi(self, params: dict) -> dict:
+    async def request_cgi(self, params: dict) -> str:
         """Make a request to get the IPX800 CGI API."""
         auth = None
         if self._username and self._password:
