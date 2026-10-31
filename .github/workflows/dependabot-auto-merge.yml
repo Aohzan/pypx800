@@ -1,0 +1,78 @@
+---
+name: Dependabot auto-merge
+
+on: pull_request_target # zizmor: ignore[dangerous-triggers] only reads PR metadata and CI status, never checks out PR code
+
+# A new push to the PR supersedes the pending merge of the previous head.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  metadata:
+    name: Dependabot metadata
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      update-type: ${{ steps.metadata.outputs.update-type }}
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+
+  merge:
+    name: Merge minor and patch updates
+    needs: metadata
+    # Major updates may break things and are reviewed by hand.
+    if: >-
+      needs.metadata.outputs.update-type == 'version-update:semver-minor'
+      || needs.metadata.outputs.update-type == 'version-update:semver-patch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      actions: read # watch the CI run of the PR head
+    steps:
+      # The default branch has no required status checks, so the PR is merged
+      # only once its CI run has passed.
+      - name: Wait for CI to pass
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          run_id=""
+          for _ in $(seq 30); do
+            run_id="$(gh run list --workflow ci.yml --commit "$HEAD_SHA" --event pull_request \
+              --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+            [ -n "$run_id" ] && break
+            sleep 10
+          done
+          if [ -z "$run_id" ]; then
+            echo "::error::No CI run found for $HEAD_SHA"
+            exit 1
+          fi
+          gh run watch "$run_id" --exit-status --interval 30
+
+      # The bot app is dedicated to these merges, so its installation permissions are
+      # the scope. Merging an Actions update also needs the workflows permission.
+      - name: Generate token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3.2.0 # zizmor: ignore[github-app]
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+          repositories: ${{ github.event.repository.name }}
+
+      # The app token, unlike GITHUB_TOKEN, lets the merge trigger the workflows on main.
+      - name: Merge
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: gh pr merge "$PR_URL" --merge --match-head-commit "$HEAD_SHA"
