@@ -36,3 +36,22 @@ jobs:
         run: uv run python -c "import pypx800"
       - name: Build the package
         run: uv build
+
+  # Dependabot updates are merged once the checks passed, except semver-major
+  # ones. RELEASE_TOKEN (an Actions and a Dependabot secret) is needed to merge
+  # changes to workflow files and to trigger the release workflow.
+  dependabot:
+    name: Dependabot merge
+    needs: [build]
+    # Opened by Dependabot from a branch of the repository. The called workflow
+    # also checks the last push came from Dependabot, with its commits.
+    if: >-
+      github.event_name == 'pull_request'
+      && github.event.pull_request.user.login == 'dependabot[bot]'
+      && github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: write
+      pull-requests: write
+    uses: Aohzan/.github/.github/workflows/dependabot-merge.yaml@ae7bef8d171afeda0951efefff7f1f1737a5cb39 # v3
+    secrets:
+      RELEASE_TOKEN: ${{ secrets.RELEASE_TOKEN }}
